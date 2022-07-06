@@ -10,7 +10,7 @@ var velocity = Vector2.ZERO
 export (float) var friction = 10
 export (float) var acceleration = 25
 
-enum state {IDLE, RUNNINIG, PUSHING, ROLLING, JUMP, FALL, ATTACK}
+enum state {IDLE, RUNNINIG, PUSHING, ROLLING, JUMP, STARTJUMP, FALL, ATTACK}
 
 onready var player_state = state.IDLE
 
@@ -18,10 +18,35 @@ func _ready():
 	$AnimationPlayer.play("Idle")
 	pass
 
-func update_animation(anim):
-	$Animation.play(anim)
-	
-func handle_state(state):
+func update_animation(_anim):
 	pass
 	
-func _physics
+func handle_state(_state):
+	pass
+
+func get_input():
+	var dir = Input.get_action_strength("right") - Input.get_action_strength("left")
+	if dir != 0:
+		velocity.x = move_toward(velocity.x, dir*speed, acceleration)
+	else:
+		velocity.x = move_toward(velocity.x, 0, friction)
+	
+	
+func _physics_process(delta):
+	get_input()
+	if velocity == Vector2.ZERO:
+		player_state = state.IDLE
+	elif velocity.x != 0 and Input.is_action_just_pressed("jump") and is_on_floor():
+		player_state = state.STARTJUMP
+	elif velocity.x != 0:
+		player_state = state.RUNNINIG 
+		
+	if not is_on_floor():
+		if velocity.y < 0:
+			player_state = state.JUMP
+		if velocity.y > 0:
+			player_state = state.FALL
+			
+	#set gravity
+	velocity.y += gravity * delta
+	velocity = move_and_slide(velocity, Vector2.UP)
