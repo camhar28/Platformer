@@ -78,3 +78,5 @@ frame = 1
 autoplay = "SpikeTrigger"
 anims/RESET = SubResource( 2 )
 anims/SpikeTrigger = SubResource( 3 )
+
+[connection signal="body_entered" from="." to="." method="_on_Area2D_body_entered"]
