@@ -3,7 +3,7 @@ extends Area2D
 func _ready():
 	$AnimationPlayer.play("Checkpoint") 
 	
-func _process(delta):
+func _process(_delta):
 	if GameStats.get_spawn() != self:
 		$AnimationPlayer.play("Checkpoint")
 	
